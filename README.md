@@ -20,12 +20,12 @@ See [docs](docs/Miro_Take_Home_Test_(Java).pdf).
 ## API
 
 ### Widget model JSON
-```json
+```
 {
     "id": <string>, read-only
     "x": <integer>, required
     "y": <integer>, required
-    "z": <integer>
+    "z": <integer>,
     "width": <double>, required
     "height": <double>, reqiured
     "lastModifiedAt": <timestamp>, read-only
@@ -35,11 +35,11 @@ See [docs](docs/Miro_Take_Home_Test_(Java).pdf).
 ### POST /widgets
 
 Request:
-```json
+```
 {
     "x": <integer>, required
     "y": <integer>, required
-    "z": <integer>
+    "z": <integer>,
     "width": <double>, required
     "height": <double>, reqiured
 }
@@ -75,12 +75,12 @@ Read widget by provided ID.
 ### PUT /widgets/:id
 
 Request:
-```json
+```
 {
-    "x": <integer>
-    "y": <integer>
-    "z": <integer>
-    "width": <double>
+    "x": <integer>,
+    "y": <integer>,
+    "z": <integer>,
+    "width": <double>,
     "height": <double>
 }
 ```
