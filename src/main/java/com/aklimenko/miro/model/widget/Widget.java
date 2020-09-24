@@ -11,7 +11,7 @@
  express or implied. See the License for the specific language governing permissions and
  limitations under the License.
 */
-package com.aklimenko.miro.model;
+package com.aklimenko.miro.model.widget;
 
 import com.aklimenko.miro.utils.ValidationHelper;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -15,9 +15,9 @@ package com.aklimenko.miro.persistence;
 
 import com.aklimenko.miro.exception.WidgetNotFoundException;
 import com.aklimenko.miro.exception.ZIndexLimitExceededException;
-import com.aklimenko.miro.model.Widget;
-import com.aklimenko.miro.model.WidgetCreateRequest;
-import com.aklimenko.miro.model.WidgetUpdateRequest;
+import com.aklimenko.miro.model.widget.Widget;
+import com.aklimenko.miro.model.widget.WidgetCreateRequest;
+import com.aklimenko.miro.model.widget.WidgetUpdateRequest;
 import java.util.Collection;
 
 /** Contract of widget repository with basic CRUD operations on widgets. */

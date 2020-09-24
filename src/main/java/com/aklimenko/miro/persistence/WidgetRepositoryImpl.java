@@ -14,10 +14,10 @@
 package com.aklimenko.miro.persistence;
 
 import com.aklimenko.miro.exception.WidgetNotFoundException;
-import com.aklimenko.miro.model.Widget;
-import com.aklimenko.miro.model.WidgetCreateRequest;
-import com.aklimenko.miro.model.WidgetUpdateRequest;
-import com.aklimenko.miro.service.concurrent.ConcurrentAccessLocker;
+import com.aklimenko.miro.model.widget.Widget;
+import com.aklimenko.miro.model.widget.WidgetCreateRequest;
+import com.aklimenko.miro.model.widget.WidgetUpdateRequest;
+import com.aklimenko.miro.concurrent.ConcurrentAccessLocker;
 import com.aklimenko.miro.utils.ValidationHelper;
 import java.util.ArrayList;
 import java.util.Collection;

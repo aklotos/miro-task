@@ -13,9 +13,9 @@
 */
 package com.aklimenko.miro.service;
 
-import com.aklimenko.miro.model.Widget;
-import com.aklimenko.miro.model.WidgetCreateRequest;
-import com.aklimenko.miro.model.WidgetUpdateRequest;
+import com.aklimenko.miro.model.widget.Widget;
+import com.aklimenko.miro.model.widget.WidgetCreateRequest;
+import com.aklimenko.miro.model.widget.WidgetUpdateRequest;
 import com.aklimenko.miro.persistence.WidgetRepository;
 import java.util.Collection;
 import org.springframework.stereotype.Service;

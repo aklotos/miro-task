@@ -14,7 +14,7 @@
 package com.aklimenko.miro.utils;
 
 import com.aklimenko.miro.exception.ZIndexLimitExceededException;
-import com.aklimenko.miro.model.Widget;
+import com.aklimenko.miro.model.widget.Widget;
 
 /** Helper class to simplify validation of request payload. */
 public class ValidationHelper {

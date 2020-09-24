@@ -13,9 +13,9 @@
 */
 package com.aklimenko.miro.api;
 
-import com.aklimenko.miro.model.Widget;
-import com.aklimenko.miro.model.WidgetCreateRequest;
-import com.aklimenko.miro.model.WidgetUpdateRequest;
+import com.aklimenko.miro.model.widget.Widget;
+import com.aklimenko.miro.model.widget.WidgetCreateRequest;
+import com.aklimenko.miro.model.widget.WidgetUpdateRequest;
 import com.aklimenko.miro.service.WidgetService;
 import com.aklimenko.miro.utils.ResponseHelper;
 import java.util.Collection;

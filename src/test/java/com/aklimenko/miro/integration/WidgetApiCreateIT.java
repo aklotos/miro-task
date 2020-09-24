@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-import com.aklimenko.miro.model.Widget;
+import com.aklimenko.miro.model.widget.Widget;
 import com.aklimenko.miro.persistence.WidgetRepositoryImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

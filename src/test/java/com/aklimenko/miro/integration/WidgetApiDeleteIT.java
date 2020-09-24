@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
-import com.aklimenko.miro.model.Widget;
+import com.aklimenko.miro.model.widget.Widget;
 import com.aklimenko.miro.persistence.WidgetRepositoryImpl;
 import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;

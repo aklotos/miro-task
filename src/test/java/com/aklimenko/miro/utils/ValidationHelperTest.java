@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.aklimenko.miro.exception.ZIndexLimitExceededException;
-import com.aklimenko.miro.model.Widget;
+import com.aklimenko.miro.model.widget.Widget;
 import java.time.Instant;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
