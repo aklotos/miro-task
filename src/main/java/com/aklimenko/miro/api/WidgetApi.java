@@ -13,11 +13,12 @@
 */
 package com.aklimenko.miro.api;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 import com.aklimenko.miro.model.widget.Widget;
 import com.aklimenko.miro.model.widget.WidgetCreateRequest;
 import com.aklimenko.miro.model.widget.WidgetUpdateRequest;
 import java.util.Collection;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,10 +27,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /** Rest API controller for /widgets. */
-@RestController
 @RequestMapping(path = "/widgets")
 public interface WidgetApi {
 
@@ -39,7 +38,7 @@ public interface WidgetApi {
    *
    * @return {@link Collection<Widget>} wrapped into {@link ResponseEntity}.
    */
-  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(produces = APPLICATION_JSON_VALUE)
   ResponseEntity<Collection<Widget>> listWidgets();
 
   /**
@@ -49,7 +48,7 @@ public interface WidgetApi {
    * @param id ID to look for widget.
    * @return {@link Widget} wrapped into {@link ResponseEntity}.
    */
-  @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
   ResponseEntity<Widget> readWidget(@PathVariable("id") final String id);
 
   /**
@@ -61,9 +60,7 @@ public interface WidgetApi {
    * @param widgetToCreate Widget creation payload.
    * @return {@link Widget} wrapped into {@link ResponseEntity}.
    */
-  @PostMapping(
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
   ResponseEntity<Widget> createWidget(@RequestBody final WidgetCreateRequest widgetToCreate);
 
   /**
@@ -76,10 +73,7 @@ public interface WidgetApi {
    * @param widgetUpdate Widget update payload.
    * @return {@link Widget} wrapped into {@link ResponseEntity}.
    */
-  @PutMapping(
-      path = "/{id}",
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @PutMapping(path = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
   ResponseEntity<Widget> updateWidget(
       @PathVariable("id") final String id, @RequestBody final WidgetUpdateRequest widgetUpdate);
 
@@ -90,6 +84,6 @@ public interface WidgetApi {
    * @param id ID to look for widget to remove.
    * @return Empty response.
    */
-  @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @DeleteMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
   ResponseEntity<?> deleteWidget(@PathVariable("id") final String id);
 }

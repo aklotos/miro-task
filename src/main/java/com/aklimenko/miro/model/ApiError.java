@@ -55,4 +55,8 @@ public class ApiError {
   public static ApiError conflict(final String errorMsg) {
     return new ApiError(HttpStatus.CONFLICT, errorMsg);
   }
+
+  public static ApiError tooManyRequests() {
+    return new ApiError(HttpStatus.TOO_MANY_REQUESTS, "Rate limit exceeded.");
+  }
 }

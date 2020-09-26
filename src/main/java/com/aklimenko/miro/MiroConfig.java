@@ -13,19 +13,89 @@
 */
 package com.aklimenko.miro;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@Configuration
+@ConfigurationProperties(prefix = "miro")
 public class MiroConfig {
 
-  @Bean
-  public Jackson2ObjectMapperBuilderCustomizer jacksonBuilder() {
-    return builder ->
-        builder
-            .featuresToDisable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
-            .featuresToEnable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+  public static class RateLimit {
+
+    private int windowSizeMS = 60000; // 1 minute
+    private int limitGlobal = -1;
+    private int limitListWidgets = -1;
+    private int limitReadWidget = -1;
+    private int limitCreateWidget = -1;
+    private int limitUpdateWidget = -1;
+    private int limitDeleteWidget = -1;
+
+    public int getWindowSizeMS() {
+      return windowSizeMS;
+    }
+
+    public void setWindowSizeMS(int windowSizeMS) {
+      this.windowSizeMS = windowSizeMS;
+    }
+
+    public int getLimitGlobal() {
+      return limitGlobal;
+    }
+
+    public void setLimitGlobal(int limitGlobal) {
+      this.limitGlobal = limitGlobal;
+    }
+
+    public int getLimitListWidgets() {
+      return limitListWidgets;
+    }
+
+    public void setLimitListWidgets(int limitListWidgets) {
+      this.limitListWidgets = limitListWidgets;
+    }
+
+    public int getLimitReadWidget() {
+      return limitReadWidget;
+    }
+
+    public void setLimitReadWidget(int limitReadWidget) {
+      this.limitReadWidget = limitReadWidget;
+    }
+
+    public int getLimitCreateWidget() {
+      return limitCreateWidget;
+    }
+
+    public void setLimitCreateWidget(int limitCreateWidget) {
+      this.limitCreateWidget = limitCreateWidget;
+    }
+
+    public int getLimitUpdateWidget() {
+      return limitUpdateWidget;
+    }
+
+    public void setLimitUpdateWidget(int limitUpdateWidget) {
+      this.limitUpdateWidget = limitUpdateWidget;
+    }
+
+    public int getLimitDeleteWidget() {
+      return limitDeleteWidget;
+    }
+
+    public void setLimitDeleteWidget(int limitDeleteWidget) {
+      this.limitDeleteWidget = limitDeleteWidget;
+    }
+  }
+
+  @Value("${miro.concurrent.accessLocker}")
+  private String accessLocker;
+
+  private final RateLimit rateLimit = new RateLimit();
+
+  public String getAccessLocker() {
+    return accessLocker;
+  }
+
+  public RateLimit getRateLimit() {
+    return rateLimit;
   }
 }

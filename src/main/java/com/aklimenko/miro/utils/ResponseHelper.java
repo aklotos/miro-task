@@ -43,4 +43,8 @@ public class ResponseHelper {
   public static ResponseEntity<ApiError> conflict(final String errorMsg) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiError.conflict(errorMsg));
   }
+
+  public static ResponseEntity<ApiError> tooManyRequests() {
+    return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(ApiError.tooManyRequests());
+  }
 }

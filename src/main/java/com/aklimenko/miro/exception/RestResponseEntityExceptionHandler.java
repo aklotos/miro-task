@@ -69,6 +69,14 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     return ResponseHelper.conflict(ex.getMessage());
   }
 
+  @ExceptionHandler({RateLimitExceededException.class})
+  public ResponseEntity<ApiError> handleRateLimitExceededException(
+      final Exception ex, final WebRequest request) {
+    log.debug(ex.getMessage());
+
+    return ResponseHelper.tooManyRequests();
+  }
+
   @ExceptionHandler({Exception.class})
   public ResponseEntity<ApiError> handleAllExceptions(
       final Exception ex, final WebRequest request) {
