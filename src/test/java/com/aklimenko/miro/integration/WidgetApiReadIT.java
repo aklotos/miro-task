@@ -15,19 +15,24 @@ package com.aklimenko.miro.integration;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.notNullValue;
 
 import com.aklimenko.miro.model.widget.Widget;
 import com.aklimenko.miro.persistence.WidgetRepositoryImpl;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,6 +48,7 @@ public class WidgetApiReadIT {
 
   @LocalServerPort private int serverPort;
   @Autowired WidgetRepositoryImpl widgetRepository;
+  @Autowired ObjectMapper objectMapper;
 
   @BeforeEach
   void restAssuredPort() {
@@ -52,6 +58,17 @@ public class WidgetApiReadIT {
   @AfterEach
   void cleanUp() {
     widgetRepository.cleanUp();
+  }
+
+  private String linkHeader(final String uri, final int limit, final String afterId) {
+    return "<http://localhost:"
+        + serverPort
+        + uri
+        + "?limit="
+        + limit
+        + "&afterId="
+        + afterId
+        + ">; rel=\"next\"";
   }
 
   @Test
@@ -92,6 +109,90 @@ public class WidgetApiReadIT {
     }
     var ids = response.stream().map(Widget::getId).collect(Collectors.toSet());
     assertThat(ids.size(), equalTo(5));
+  }
+
+  @Test
+  @DisplayName("should read only one widgets page")
+  void shouldReadOneWidgetsPage() throws IOException {
+    // given
+    var createdIds = new ArrayList<String>();
+    for (int i = 1; i <= 5; i++) {
+      var createWidgetRequest = new HttpPost("http://localhost:" + serverPort + "/widgets");
+      createWidgetRequest.setEntity(
+          new StringEntity("{\"x\":1,\"y\":1,\"z\":" + i + ",\"width\":1.0,\"height\":1.0}"));
+      createWidgetRequest.setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+      var createdWidgetResponse = HttpClientBuilder.create().build().execute(createWidgetRequest);
+      var jsonFromResponse = EntityUtils.toString(createdWidgetResponse.getEntity());
+      var widget = objectMapper.readValue(jsonFromResponse, new TypeReference<Widget>() {});
+      createdIds.add(widget.getId());
+    }
+    System.out.println(createdIds);
+
+    // when
+    var request = RestAssured.given().when().contentType(ContentType.JSON).get("/widgets?limit=2");
+
+    // then
+    var response =
+        request
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .header("Link", equalTo(linkHeader("/widgets", 2, createdIds.get(1))))
+            .extract()
+            .body()
+            .as(new TypeRef<List<Widget>>() {});
+    assertThat(2, equalTo(response.size()));
+    for (int i = 1; i <= 2; i++) {
+      var widget = response.get(i - 1);
+      assertThat(widget.getId(), notNullValue());
+      assertThat(widget.getX(), equalTo(1));
+      assertThat(widget.getY(), equalTo(1));
+      assertThat(widget.getZ(), equalTo(i));
+      assertThat(widget.getHeight(), equalTo(1.0));
+      assertThat(widget.getWidth(), equalTo(1.0));
+      assertThat(widget.getLastModifiedAt(), notNullValue());
+    }
+  }
+
+  @Test
+  @DisplayName("should read only one widgets page after given id")
+  void shouldReadOneWidgetsPageAfterGivenId() throws IOException {
+    // given
+    var createdIds = new ArrayList<String>();
+    for (int i = 1; i <= 5; i++) {
+      var createWidgetRequest = new HttpPost("http://localhost:" + serverPort + "/widgets");
+      createWidgetRequest.setEntity(
+          new StringEntity("{\"x\":1,\"y\":1,\"z\":" + i + ",\"width\":1.0,\"height\":1.0}"));
+      createWidgetRequest.setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+      var createdWidgetResponse = HttpClientBuilder.create().build().execute(createWidgetRequest);
+      var jsonFromResponse = EntityUtils.toString(createdWidgetResponse.getEntity());
+      var widget = objectMapper.readValue(jsonFromResponse, new TypeReference<Widget>() {});
+      createdIds.add(widget.getId());
+    }
+    System.out.println(createdIds);
+
+    // when
+    var request = RestAssured.given().when().contentType(ContentType.JSON).get("/widgets?limit=2&afterId="+createdIds.get(1));
+
+    // then
+    var response =
+        request
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .header("Link", equalTo(linkHeader("/widgets", 2, createdIds.get(3))))
+            .extract()
+            .body()
+            .as(new TypeRef<List<Widget>>() {});
+    assertThat(2, equalTo(response.size()));
+    for (int i = 1; i <= 2; i++) {
+      var widget = response.get(i - 1);
+      assertThat(widget.getId(), notNullValue());
+      assertThat(widget.getX(), equalTo(1));
+      assertThat(widget.getY(), equalTo(1));
+      assertThat(widget.getZ(), equalTo(i + 2));
+      assertThat(widget.getHeight(), equalTo(1.0));
+      assertThat(widget.getWidth(), equalTo(1.0));
+      assertThat(widget.getLastModifiedAt(), notNullValue());
+    }
   }
 
   @Test

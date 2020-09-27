@@ -11,11 +11,11 @@
  express or implied. See the License for the specific language governing permissions and
  limitations under the License.
 */
-package com.aklimenko.miro.model.widget;
+package com.aklimenko.miro.model.ratelimit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -26,19 +26,21 @@ import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class WidgetUpdateRequestTest {
+public class RateLimitRuleUpdateRequestTest {
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
   @Test
-  @DisplayName("should deserialize WidgetUpdateRequest")
-  void shouldDeserializeWidgetUpdateRequest() throws JsonProcessingException {
-    var json = "{\"x\":1,\"width\":4.0}";
-    var widgetUpdate = objectMapper.readValue(json, WidgetUpdateRequest.class);
-    assertThat(widgetUpdate.getX(), equalTo(1));
-    assertThat(widgetUpdate.getY(), nullValue());
-    assertThat(widgetUpdate.getZ(), nullValue());
-    assertThat(widgetUpdate.getWidth(), equalTo(4.0));
-    assertThat(widgetUpdate.getHeight(), nullValue());
+  @DisplayName("should deserialize RateLimitUpdateRequest")
+  void shouldDeserializeRateLimitUpdateRequest() throws JsonProcessingException {
+    var json = "{\"windowSizeMS\":80000,\"limitGlobal\":4000}";
+    var request = objectMapper.readValue(json, RateLimitRuleUpdateRequest.class);
+    assertThat(request.getWindowSizeMS(), equalTo(80000));
+    assertThat(request.getLimitGlobal(), equalTo(4000));
+    assertThat(request.getLimitCreateWidget(), nullValue());
+    assertThat(request.getLimitDeleteWidget(), nullValue());
+    assertThat(request.getLimitListWidgets(), nullValue());
+    assertThat(request.getLimitReadWidget(), nullValue());
+    assertThat(request.getLimitUpdateWidget(), nullValue());
   }
 
   @Test
@@ -48,12 +50,13 @@ public class WidgetUpdateRequestTest {
     var ex =
         assertThrows(
             ValueInstantiationException.class,
-            () -> objectMapper.readValue(json, WidgetUpdateRequest.class));
-    assertThat(ex.getCause(), not(nullValue()));
+            () -> objectMapper.readValue(json, RateLimitRuleUpdateRequest.class));
+    assertThat(ex.getCause(), notNullValue());
     var cause = ex.getCause();
     assertThat(cause.getClass(), equalTo(RequestValidationException.class));
     assertThat(
         cause.getMessage(),
-        equalTo("At least one of the fields 'x', 'y', 'z', 'width' or 'height' must be provided."));
+        equalTo(
+            "At least one of the fields 'windowSizeMS', 'limitGlobal', 'limitListWidgets', 'limitReadWidget', 'limitCreateWidget', 'limitUpdateWidget', 'limitDeleteWidget' must be provided."));
   }
 }

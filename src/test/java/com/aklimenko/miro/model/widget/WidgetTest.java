@@ -13,10 +13,11 @@
 */
 package com.aklimenko.miro.model.widget;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.aklimenko.miro.exception.ZIndexLimitExceededException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -55,9 +56,10 @@ public class WidgetTest {
   void shouldSerializeIntoValidJSON() throws JsonProcessingException {
     var widget = new Widget("123-456", 1, 2, 3, 4.0, 5.0, Instant.ofEpochMilli(1600811667066L));
     var json = objectMapper.writeValueAsString(widget);
-    assertEquals(
-        "{\"id\":\"123-456\",\"x\":1,\"y\":2,\"z\":3,\"width\":4.0,\"height\":5.0,\"lastModifiedAt\":1600811667066}",
-        json);
+    assertThat(
+        json,
+        equalTo(
+            "{\"id\":\"123-456\",\"x\":1,\"y\":2,\"z\":3,\"width\":4.0,\"height\":5.0,\"lastModifiedAt\":1600811667066}"));
   }
 
   @Test
@@ -65,14 +67,14 @@ public class WidgetTest {
   void shouldNotThrowWhenShiftingWidgetUpwards() {
     var widget = new Widget("123-456", 1, 2, 10, 4.0, 5.0, Instant.ofEpochMilli(1600811667066L));
     var shifted = widget.shiftUpward();
-    assertNotEquals(widget, shifted);
-    assertEquals("123-456", shifted.getId());
-    assertEquals(1, shifted.getX());
-    assertEquals(2, shifted.getY());
-    assertEquals(4.0, shifted.getWidth());
-    assertEquals(5.0, shifted.getHeight());
-    assertTrue(1600811667066L < shifted.getLastModifiedAt().toEpochMilli());
-    assertEquals(11, shifted.getZ());
+    assertThat(shifted, not(equalTo(widget)));
+    assertThat(shifted.getId(), equalTo("123-456"));
+    assertThat(shifted.getX(), equalTo(1));
+    assertThat(shifted.getY(), equalTo(2));
+    assertThat(shifted.getWidth(), equalTo(4.0));
+    assertThat(shifted.getHeight(), equalTo(5.0));
+    assertThat(shifted.getLastModifiedAt().toEpochMilli() > 1600811667066L, is(true));
+    assertThat(shifted.getZ(), equalTo(11));
   }
 
   @Test
@@ -88,11 +90,11 @@ public class WidgetTest {
     var widget = new Widget("123-456", 1, 2, Integer.MAX_VALUE, 4.0, 5.0, Instant.now());
     var widgetUpdate = new WidgetUpdateRequest(100, null, 0, 200.0, null);
     var updated = widget.updateBy(widgetUpdate);
-    assertNotEquals(widget, updated);
-    assertEquals(100, updated.getX());
-    assertEquals(2, updated.getY());
-    assertEquals(0, updated.getZ());
-    assertEquals(200.0, updated.getWidth());
-    assertEquals(5.0, updated.getHeight());
+    assertThat(updated, not(equalTo(widget)));
+    assertThat(updated.getX(), equalTo(100));
+    assertThat(updated.getY(), equalTo(2));
+    assertThat(updated.getZ(), equalTo(0));
+    assertThat(updated.getWidth(), equalTo(200.0));
+    assertThat(updated.getHeight(), equalTo(5.0));
   }
 }

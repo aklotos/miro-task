@@ -17,6 +17,7 @@ import com.aklimenko.miro.MiroConfig;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nonnull;
 
 /** Represents rate limit rule mutable model for fixed window rate limit algorithm. */
 public class RateLimitRule {
@@ -27,7 +28,7 @@ public class RateLimitRule {
   /** Limits specified for each rate limited target operation. */
   private final Map<RateLimitTarget, Integer> limits = new HashMap<>();
 
-  public RateLimitRule(final MiroConfig config) {
+  public RateLimitRule(@Nonnull final MiroConfig config) {
     this(
         config.getRateLimit().getWindowSizeMS(),
         config.getRateLimit().getLimitGlobal(),

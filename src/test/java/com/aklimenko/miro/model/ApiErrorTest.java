@@ -13,7 +13,8 @@
 */
 package com.aklimenko.miro.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +30,6 @@ public class ApiErrorTest {
   void shouldSerializeApiErrorIntoValidJson() throws JsonProcessingException {
     var apiError = new ApiError(HttpStatus.CONFLICT, "PEBCAK");
     var json = objectMapper.writeValueAsString(apiError);
-    assertEquals("{\"status\":409,\"error\":\"PEBCAK\"}", json);
+    assertThat(json, equalTo("{\"status\":409,\"error\":\"PEBCAK\"}"));
   }
 }

@@ -14,7 +14,6 @@
 package com.aklimenko.miro.model.ratelimit;
 
 import java.time.Instant;
-import java.util.Objects;
 import javax.annotation.Nonnull;
 
 /**
@@ -31,9 +30,9 @@ public class RateLimitStats {
       @Nonnull final String rateLimit,
       @Nonnull final String availableRequests,
       @Nonnull final String nextReset) {
-    this.rateLimit = Objects.requireNonNull(rateLimit);
-    this.availableRequests = Objects.requireNonNull(availableRequests);
-    this.nextReset = Objects.requireNonNull(nextReset);
+    this.rateLimit = rateLimit;
+    this.availableRequests = availableRequests;
+    this.nextReset = nextReset;
   }
 
   /**

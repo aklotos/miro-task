@@ -133,7 +133,7 @@ public class WidgetRepositoryImpl implements WidgetRepository {
                   .map(Widget::getZ)
                   .map(afterZ -> widgetsByZIndex.tailMap(afterZ, false))
                   .orElse(widgetsByZIndex);
-          return afterZMap.values().stream().limit(limit).collect(Collectors.toList());
+          return afterZMap.values().stream().limit(limit).collect(Collectors.toUnmodifiableList());
         });
   }
 

@@ -13,9 +13,10 @@
 */
 package com.aklimenko.miro.model.widget;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.aklimenko.miro.exception.RequestValidationException;
@@ -33,11 +34,11 @@ public class WidgetCreateRequestTest {
   void shouldDeserializeWidgetCreateRequestWithZ() throws JsonProcessingException {
     var json = "{\"x\":1,\"y\":2,\"z\":3,\"width\":4.0,\"height\":5.0}";
     var widgetCreate = objectMapper.readValue(json, WidgetCreateRequest.class);
-    assertEquals(1, widgetCreate.getX());
-    assertEquals(2, widgetCreate.getY());
-    assertEquals(3, widgetCreate.getZ());
-    assertEquals(4.0, widgetCreate.getWidth());
-    assertEquals(5.0, widgetCreate.getHeight());
+    assertThat(widgetCreate.getX(), equalTo(1));
+    assertThat(widgetCreate.getY(), equalTo(2));
+    assertThat(widgetCreate.getZ(), equalTo(3));
+    assertThat(widgetCreate.getWidth(), equalTo(4.0));
+    assertThat(widgetCreate.getHeight(), equalTo(5.0));
   }
 
   @Test
@@ -45,11 +46,11 @@ public class WidgetCreateRequestTest {
   void shouldDeserializeWidgetCreateRequestWithoutZ() throws JsonProcessingException {
     var json = "{\"x\":1,\"y\":2,\"width\":4.0,\"height\":5.0}";
     var widgetCreate = objectMapper.readValue(json, WidgetCreateRequest.class);
-    assertEquals(1, widgetCreate.getX());
-    assertEquals(2, widgetCreate.getY());
-    assertNull(widgetCreate.getZ());
-    assertEquals(4.0, widgetCreate.getWidth());
-    assertEquals(5.0, widgetCreate.getHeight());
+    assertThat(widgetCreate.getX(), equalTo(1));
+    assertThat(widgetCreate.getY(), equalTo(2));
+    assertThat(widgetCreate.getZ(), nullValue());
+    assertThat(widgetCreate.getWidth(), equalTo(4.0));
+    assertThat(widgetCreate.getHeight(), equalTo(5.0));
   }
 
   @Test
@@ -60,10 +61,10 @@ public class WidgetCreateRequestTest {
         assertThrows(
             ValueInstantiationException.class,
             () -> objectMapper.readValue(json, WidgetCreateRequest.class));
-    assertNotNull(ex.getCause());
+    assertThat(ex.getCause(), notNullValue());
     var cause = ex.getCause();
-    assertEquals(RequestValidationException.class, cause.getClass());
-    assertEquals("Field 'x' must be provided.", cause.getMessage());
+    assertThat(cause.getClass(), equalTo(RequestValidationException.class));
+    assertThat(cause.getMessage(), equalTo("Field 'x' must be provided."));
   }
 
   @Test
@@ -71,12 +72,12 @@ public class WidgetCreateRequestTest {
   void shouldCreateNewWidget() {
     var widgetCreate = new WidgetCreateRequest(1, 2, null, 4.0, 5.0);
     var widget = widgetCreate.toNewWidget(100);
-    assertNotNull(widget.getId());
-    assertNotNull(widget.getLastModifiedAt());
-    assertEquals(1, widget.getX());
-    assertEquals(2, widget.getY());
-    assertEquals(100, widget.getZ());
-    assertEquals(4.0, widget.getWidth());
-    assertEquals(5.0, widget.getHeight());
+    assertThat(widget.getId(), notNullValue());
+    assertThat(widget.getLastModifiedAt(), notNullValue());
+    assertThat(widget.getX(), equalTo(1));
+    assertThat(widget.getY(), equalTo(2));
+    assertThat(widget.getZ(), equalTo(100));
+    assertThat(widget.getWidth(), equalTo(4.0));
+    assertThat(widget.getHeight(), equalTo(5.0));
   }
 }

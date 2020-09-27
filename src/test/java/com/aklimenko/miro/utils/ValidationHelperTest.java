@@ -13,7 +13,8 @@
 */
 package com.aklimenko.miro.utils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.aklimenko.miro.exception.RequestValidationException;
@@ -42,7 +43,7 @@ public class ValidationHelperTest {
         assertThrows(
             RequestValidationException.class,
             () -> ValidationHelper.requireNonNull(null, "error message"));
-    assertEquals("error message", exception.getMessage());
+    assertThat(exception.getMessage(), equalTo("error message"));
   }
 
   @ParameterizedTest
@@ -60,8 +61,10 @@ public class ValidationHelperTest {
     var widget = new Widget("123", 1, 1, Integer.MAX_VALUE, 1, 1, Instant.now());
     var ex =
         assertThrows(
-            ZIndexLimitExceededException.class, () -> ValidationHelper.ensureSafeToPlaceOnTopOf(widget));
-    assertEquals(
-        "Z-index limit exceeded. Can not place widget on top of widget [id=123].", ex.getMessage());
+            ZIndexLimitExceededException.class,
+            () -> ValidationHelper.ensureSafeToPlaceOnTopOf(widget));
+    assertThat(
+        ex.getMessage(),
+        equalTo("Z-index limit exceeded. Can not place widget on top of widget [id=123]."));
   }
 }

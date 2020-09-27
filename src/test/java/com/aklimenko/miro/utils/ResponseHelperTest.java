@@ -13,8 +13,9 @@
 */
 package com.aklimenko.miro.utils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 
 import com.aklimenko.miro.model.ApiError;
 import org.junit.jupiter.api.DisplayName;
@@ -27,56 +28,78 @@ public class ResponseHelperTest {
   @DisplayName("should return HTTP 200 OK with response for ok(response)")
   void shouldReturn200WithEntityResponse() {
     var response = ResponseHelper.ok("test response");
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals("test response", response.getBody());
+    assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+    assertThat(response.getBody(), equalTo("test response"));
   }
 
   @Test
   @DisplayName("should return HTTP 201 Created with response for created(response)")
   void shouldReturn201WithEntityResponse() {
     var response = ResponseHelper.created("test response");
-    assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    assertEquals("test response", response.getBody());
+    assertThat(response.getStatusCode(), equalTo(HttpStatus.CREATED));
+    assertThat(response.getBody(), equalTo("test response"));
   }
 
   @Test
   @DisplayName("should return HTTP 204 No content with empty response for noContent()")
   void shouldReturn204WithEmptyResponse() {
     var response = ResponseHelper.noContent();
-    assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-    assertNull(response.getBody());
+    assertThat(response.getStatusCode(), equalTo(HttpStatus.NO_CONTENT));
+    assertThat(response.getBody(), nullValue());
   }
 
   @Test
   @DisplayName("should return HTTP 500 Server error with error message for serverError()")
   void shouldReturn500WithErrorMessage() {
     var response = ResponseHelper.serverError();
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    assertThat(response.getStatusCode(), equalTo(HttpStatus.INTERNAL_SERVER_ERROR));
     var apiError = response.getBody();
-    assertEquals(ApiError.class, apiError.getClass());
-    assertEquals(500, apiError.getStatus());
-    assertEquals("Internal server error.", apiError.getError());
+    assertThat(apiError.getClass(), equalTo(ApiError.class));
+    assertThat(apiError.getStatus(), equalTo(500));
+    assertThat(apiError.getError(), equalTo("Internal server error."));
   }
 
   @Test
   @DisplayName("should return HTTP 404 Not found with error message for notFound()")
   void shouldReturn404WithErrorMessage() {
     var response = ResponseHelper.notFound("error message");
-    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
     var apiError = response.getBody();
-    assertEquals(ApiError.class, apiError.getClass());
-    assertEquals(404, apiError.getStatus());
-    assertEquals("error message", apiError.getError());
+    assertThat(apiError.getClass(), equalTo(ApiError.class));
+    assertThat(apiError.getStatus(), equalTo(404));
+    assertThat(apiError.getError(), equalTo("error message"));
   }
 
   @Test
   @DisplayName("should return HTTP 409 Conflict with error message for conflict()")
   void shouldReturn409WithErrorMessage() {
     var response = ResponseHelper.conflict("error message");
-    assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+    assertThat(response.getStatusCode(), equalTo(HttpStatus.CONFLICT));
     var apiError = response.getBody();
-    assertEquals(ApiError.class, apiError.getClass());
-    assertEquals(409, apiError.getStatus());
-    assertEquals("error message", apiError.getError());
+    assertThat(apiError.getClass(), equalTo(ApiError.class));
+    assertThat(apiError.getStatus(), equalTo(409));
+    assertThat(apiError.getError(), equalTo("error message"));
+  }
+
+  @Test
+  @DisplayName("should return HTTP 400 Bad Request with error message for badRequest()")
+  void shouldReturn400WithErrorMessage() {
+    var response = ResponseHelper.badRequest("error message");
+    assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    var apiError = response.getBody();
+    assertThat(apiError.getClass(), equalTo(ApiError.class));
+    assertThat(apiError.getStatus(), equalTo(400));
+    assertThat(apiError.getError(), equalTo("error message"));
+  }
+
+  @Test
+  @DisplayName("should return HTTP 429 Too many requests for tooManyRequests()")
+  void shouldReturn429WithErrorMessage() {
+    var response = ResponseHelper.tooManyRequests();
+    assertThat(response.getStatusCode(), equalTo(HttpStatus.TOO_MANY_REQUESTS));
+    var apiError = response.getBody();
+    assertThat(apiError.getClass(), equalTo(ApiError.class));
+    assertThat(apiError.getStatus(), equalTo(429));
+    assertThat(apiError.getError(), equalTo("Rate limit exceeded."));
   }
 }
