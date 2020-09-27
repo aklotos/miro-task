@@ -36,6 +36,10 @@ public class ResponseHelper {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiError.serverError());
   }
 
+  public static ResponseEntity<ApiError> badRequest(final String errorMsg) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiError.badRequest(errorMsg));
+  }
+
   public static ResponseEntity<ApiError> notFound(final String errorMsg) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiError.notFound(errorMsg));
   }

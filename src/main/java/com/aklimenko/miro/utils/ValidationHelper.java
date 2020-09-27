@@ -13,6 +13,7 @@
 */
 package com.aklimenko.miro.utils;
 
+import com.aklimenko.miro.exception.RequestValidationException;
 import com.aklimenko.miro.exception.ZIndexLimitExceededException;
 import com.aklimenko.miro.model.widget.Widget;
 
@@ -25,11 +26,11 @@ public class ValidationHelper {
    * @param arg Argument to validate.
    * @param message Error message if validation fails.
    * @return Provided argument.
-   * @throws IllegalArgumentException if null arguments is provided
+   * @throws RequestValidationException if null argument is provided
    */
   public static <T> T requireNonNull(final T arg, final String message) {
     if (arg == null) {
-      throw new IllegalArgumentException(message);
+      throw new RequestValidationException(message);
     }
     return arg;
   }

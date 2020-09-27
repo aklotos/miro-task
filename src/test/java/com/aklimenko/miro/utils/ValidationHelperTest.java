@@ -16,6 +16,7 @@ package com.aklimenko.miro.utils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.aklimenko.miro.exception.RequestValidationException;
 import com.aklimenko.miro.exception.ZIndexLimitExceededException;
 import com.aklimenko.miro.model.widget.Widget;
 import java.time.Instant;
@@ -39,7 +40,7 @@ public class ValidationHelperTest {
   void nullArgumentShouldThrow() {
     var exception =
         assertThrows(
-            IllegalArgumentException.class,
+            RequestValidationException.class,
             () -> ValidationHelper.requireNonNull(null, "error message"));
     assertEquals("error message", exception.getMessage());
   }

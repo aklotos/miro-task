@@ -13,6 +13,7 @@
 */
 package com.aklimenko.miro.model.widget;
 
+import com.aklimenko.miro.exception.RequestValidationException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.annotation.Nullable;
 
@@ -36,7 +37,7 @@ public class WidgetUpdateRequest {
       @JsonProperty("width") @Nullable final Double width,
       @JsonProperty("height") @Nullable final Double height) {
     if (x == null && y == null && z == null && width == null && height == null) {
-      throw new IllegalArgumentException(
+      throw new RequestValidationException(
           "At least one of the fields 'x', 'y', 'z', 'width' or 'height' must be provided.");
     }
 

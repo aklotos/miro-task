@@ -13,11 +13,13 @@
 */
 package com.aklimenko.miro.service;
 
+import com.aklimenko.miro.model.pagination.Page;
+import com.aklimenko.miro.model.pagination.Pagination;
 import com.aklimenko.miro.model.widget.Widget;
 import com.aklimenko.miro.model.widget.WidgetCreateRequest;
 import com.aklimenko.miro.model.widget.WidgetUpdateRequest;
 import com.aklimenko.miro.persistence.WidgetRepository;
-import java.util.Collection;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 /** Implementation of {@link WidgetService} contract. */
@@ -36,8 +38,11 @@ public class WidgetServiceImpl implements WidgetService {
   }
 
   @Override
-  public Collection<Widget> listWidgets() {
-    return widgetRepository.listWidgets();
+  public Page<Widget> listWidgets(final Pagination pagination) {
+    final List<Widget> widgets =
+        widgetRepository.listWidgets(pagination.getLimit(), pagination.getAfterId());
+
+    return new Page<>(widgets, pagination, Widget::getId);
   }
 
   @Override

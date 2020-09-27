@@ -13,12 +13,14 @@
 */
 package com.aklimenko.miro.api;
 
+import com.aklimenko.miro.model.pagination.Page;
+import com.aklimenko.miro.model.pagination.Pagination;
 import com.aklimenko.miro.model.widget.Widget;
 import com.aklimenko.miro.model.widget.WidgetCreateRequest;
 import com.aklimenko.miro.model.widget.WidgetUpdateRequest;
 import com.aklimenko.miro.service.WidgetService;
 import com.aklimenko.miro.utils.ResponseHelper;
-import java.util.Collection;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -36,11 +38,13 @@ public class WidgetApiImpl implements WidgetApi {
     this.widgetService = widgetService;
   }
 
-  public ResponseEntity<Collection<Widget>> listWidgets() {
-    log.debug("Retrieve list of widgets");
+  public ResponseEntity<Page<Widget>> listWidgets(
+      @Nullable Integer limit, @Nullable String afterId) {
+    log.debug("Retrieve page of widgets");
 
-    final Collection<Widget> widgets = widgetService.listWidgets();
-    return ResponseHelper.ok(widgets);
+    final Pagination pagination = Pagination.of(limit, afterId);
+    final Page<Widget> widgetsPage = widgetService.listWidgets(pagination);
+    return ResponseHelper.ok(widgetsPage);
   }
 
   public ResponseEntity<Widget> readWidget(final String id) {

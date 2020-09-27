@@ -18,7 +18,8 @@ import com.aklimenko.miro.exception.ZIndexLimitExceededException;
 import com.aklimenko.miro.model.widget.Widget;
 import com.aklimenko.miro.model.widget.WidgetCreateRequest;
 import com.aklimenko.miro.model.widget.WidgetUpdateRequest;
-import java.util.Collection;
+import java.util.List;
+import javax.annotation.Nullable;
 
 /** Contract of widget repository with basic CRUD operations on widgets. */
 public interface WidgetRepository {
@@ -33,11 +34,14 @@ public interface WidgetRepository {
   Widget createWidget(WidgetCreateRequest widgetToCreate);
 
   /**
-   * Read all widgets from repository.
+   * Read requested amount of widgets from repository starting after provided ID and ordered by
+   * z-index in ascending order.
    *
-   * @return {@link Collection<Widget>} ordered by z-index in ascending order.
+   * @param limit Amount of widgets to read.
+   * @param afterId Optional ID token to look up for widgets after.
+   * @return {@link List<Widget>} ordered by z-index in ascending order.
    */
-  Collection<Widget> listWidgets();
+  List<Widget> listWidgets(int limit, @Nullable String afterId);
 
   /**
    * Read widget from repository by provided ID.

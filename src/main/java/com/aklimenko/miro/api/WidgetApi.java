@@ -15,10 +15,13 @@ package com.aklimenko.miro.api;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import com.aklimenko.miro.model.pagination.Page;
 import com.aklimenko.miro.model.widget.Widget;
 import com.aklimenko.miro.model.widget.WidgetCreateRequest;
 import com.aklimenko.miro.model.widget.WidgetUpdateRequest;
-import java.util.Collection;
+import java.util.List;
+import javax.annotation.Nullable;
+import javax.websocket.server.PathParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,12 +37,16 @@ public interface WidgetApi {
 
   /**
    * {@code GET /widgets}. <br>
-   * Lists all available widgets ordered by z-index in ascending order.
+   * Lists requested widgets ordered by z-index in ascending order.
    *
-   * @return {@link Collection<Widget>} wrapped into {@link ResponseEntity}.
+   * @param limit Limits the amount of widgets in the output. Default value is 10 if not provided.
+   *     Max value is 500.
+   * @param afterId ID token to perform widgets search after.
+   * @return {@link Page} of {@link List<Widget>} wrapped into {@link ResponseEntity}.
    */
   @GetMapping(produces = APPLICATION_JSON_VALUE)
-  ResponseEntity<Collection<Widget>> listWidgets();
+  ResponseEntity<Page<Widget>> listWidgets(
+      @PathParam("limit") @Nullable Integer limit, @PathParam("afterId") @Nullable String afterId);
 
   /**
    * {@code GET /widgets/:id}. <br>

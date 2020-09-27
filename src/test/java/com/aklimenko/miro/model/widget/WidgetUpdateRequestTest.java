@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.aklimenko.miro.exception.RequestValidationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
@@ -49,7 +50,7 @@ public class WidgetUpdateRequestTest {
             () -> objectMapper.readValue(json, WidgetUpdateRequest.class));
     assertNotNull(ex.getCause());
     var cause = ex.getCause();
-    assertEquals(IllegalArgumentException.class, cause.getClass());
+    assertEquals(RequestValidationException.class, cause.getClass());
     assertEquals(
         "At least one of the fields 'x', 'y', 'z', 'width' or 'height' must be provided.",
         cause.getMessage());

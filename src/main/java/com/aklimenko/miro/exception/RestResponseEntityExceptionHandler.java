@@ -45,12 +45,20 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     String errorMsg = "Invalid JSON input.";
     final Throwable cause = ex.getRootCause();
-    if (cause instanceof IllegalArgumentException || cause instanceof IllegalStateException) {
+    if (cause instanceof RequestValidationException) {
       errorMsg = cause.getMessage();
     }
 
     return handleExceptionInternal(
         ex, ApiError.badRequest(errorMsg), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+  }
+
+  @ExceptionHandler({RequestValidationException.class})
+  public ResponseEntity<ApiError> handleRequestValidationException(
+      final Exception ex, final WebRequest request) {
+    log.debug(ex.getMessage());
+
+    return ResponseHelper.badRequest(ex.getMessage());
   }
 
   @ExceptionHandler({WidgetNotFoundException.class})

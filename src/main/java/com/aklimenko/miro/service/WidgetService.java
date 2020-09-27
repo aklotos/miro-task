@@ -15,10 +15,12 @@ package com.aklimenko.miro.service;
 
 import com.aklimenko.miro.exception.WidgetNotFoundException;
 import com.aklimenko.miro.exception.ZIndexLimitExceededException;
+import com.aklimenko.miro.model.pagination.Page;
+import com.aklimenko.miro.model.pagination.Pagination;
 import com.aklimenko.miro.model.widget.Widget;
 import com.aklimenko.miro.model.widget.WidgetCreateRequest;
 import com.aklimenko.miro.model.widget.WidgetUpdateRequest;
-import java.util.Collection;
+import java.util.List;
 
 /** Contract of widget service with basic CRUD operations on widgets. */
 public interface WidgetService {
@@ -33,11 +35,13 @@ public interface WidgetService {
   Widget createWidget(WidgetCreateRequest widgetToCreate);
 
   /**
-   * Read all widgets.
+   * Read page of widgets ordered by z-index in ascending order based on provided pagination
+   * parameters.
    *
-   * @return {@link Collection<Widget>} ordered by z-index in ascending order.
+   * @param pagination Pagination parameters to apply to look up.
+   * @return {@link List<Widget>} ordered by z-index in ascending order.
    */
-  Collection<Widget> listWidgets();
+  Page<Widget> listWidgets(Pagination pagination);
 
   /**
    * Read widget by provided ID.

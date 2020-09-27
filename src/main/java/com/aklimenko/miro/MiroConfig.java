@@ -13,7 +13,6 @@
 */
 package com.aklimenko.miro;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "miro")
@@ -86,14 +85,7 @@ public class MiroConfig {
     }
   }
 
-  @Value("${miro.concurrent.accessLocker}")
-  private String accessLocker;
-
   private final RateLimit rateLimit = new RateLimit();
-
-  public String getAccessLocker() {
-    return accessLocker;
-  }
 
   public RateLimit getRateLimit() {
     return rateLimit;

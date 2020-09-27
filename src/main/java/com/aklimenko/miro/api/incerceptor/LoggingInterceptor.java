@@ -28,7 +28,11 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
   public boolean preHandle(
       final HttpServletRequest request, final HttpServletResponse response, final Object handler)
       throws Exception {
-    log.trace("{} {}", request.getMethod(), request.getRequestURI());
+    String url = request.getRequestURI();
+    if (request.getQueryString() != null) {
+      url += "?" + request.getQueryString();
+    }
+    log.trace("{} {}", request.getMethod(), url);
 
     return super.preHandle(request, response, handler);
   }

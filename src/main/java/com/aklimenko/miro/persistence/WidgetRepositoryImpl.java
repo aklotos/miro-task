@@ -20,7 +20,6 @@ import com.aklimenko.miro.model.widget.WidgetCreateRequest;
 import com.aklimenko.miro.model.widget.WidgetUpdateRequest;
 import com.aklimenko.miro.utils.ValidationHelper;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -28,6 +27,8 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
@@ -123,8 +124,17 @@ public class WidgetRepositoryImpl implements WidgetRepository {
   }
 
   @Override
-  public Collection<Widget> listWidgets() {
-    return accessLocker.read(widgetsByZIndex::values);
+  public List<Widget> listWidgets(int limit, @Nullable String afterId) {
+    return accessLocker.read(
+        () -> {
+          final NavigableMap<Integer, Widget> afterZMap =
+              Optional.ofNullable(afterId)
+                  .map(widgetsById::get)
+                  .map(Widget::getZ)
+                  .map(afterZ -> widgetsByZIndex.tailMap(afterZ, false))
+                  .orElse(widgetsByZIndex);
+          return afterZMap.values().stream().limit(limit).collect(Collectors.toList());
+        });
   }
 
   @Override

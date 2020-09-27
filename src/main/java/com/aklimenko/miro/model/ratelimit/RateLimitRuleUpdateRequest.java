@@ -13,6 +13,7 @@
 */
 package com.aklimenko.miro.model.ratelimit;
 
+import com.aklimenko.miro.exception.RequestValidationException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.annotation.Nullable;
 
@@ -42,7 +43,7 @@ public class RateLimitRuleUpdateRequest {
         && limitCreateWidget == null
         && limitUpdateWidget == null
         && limitDeleteWidget == null) {
-      throw new IllegalArgumentException(
+      throw new RequestValidationException(
           "At least one of the fields 'windowSizeMS', 'limitGlobal', 'limitListWidgets', 'limitReadWidget', 'limitCreateWidget', 'limitUpdateWidget', 'limitDeleteWidget' must be provided.");
     }
     this.windowSizeMS = windowSizeMS;

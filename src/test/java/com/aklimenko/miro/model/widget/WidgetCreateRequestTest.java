@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.aklimenko.miro.exception.RequestValidationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
@@ -61,7 +62,7 @@ public class WidgetCreateRequestTest {
             () -> objectMapper.readValue(json, WidgetCreateRequest.class));
     assertNotNull(ex.getCause());
     var cause = ex.getCause();
-    assertEquals(IllegalArgumentException.class, cause.getClass());
+    assertEquals(RequestValidationException.class, cause.getClass());
     assertEquals("Field 'x' must be provided.", cause.getMessage());
   }
 
