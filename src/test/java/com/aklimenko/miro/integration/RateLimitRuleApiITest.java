@@ -27,7 +27,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class RateLimitRuleApiIT {
+public class RateLimitRuleApiITest {
   @LocalServerPort private int serverPort;
   @Autowired private MiroConfig config;
 

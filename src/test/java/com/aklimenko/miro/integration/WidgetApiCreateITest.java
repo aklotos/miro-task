@@ -43,7 +43,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class WidgetApiCreateIT {
+public class WidgetApiCreateITest {
 
   @LocalServerPort private int serverPort;
   @Autowired private ObjectMapper objectMapper;

@@ -44,7 +44,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class WidgetApiReadIT {
+public class WidgetApiReadITest {
 
   @LocalServerPort private int serverPort;
   @Autowired WidgetRepositoryImpl widgetRepository;

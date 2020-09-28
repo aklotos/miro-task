@@ -23,6 +23,7 @@
 		<maven.surefire-plugin.version>2.22.2</maven.surefire-plugin.version>
 		<findbugs.version>2.0.1</findbugs.version>
 		<rest-assured.version>4.2.0</rest-assured.version>
+		<jmh.version>1.25.2</jmh.version>
 	</properties>
 
 	<dependencies>
@@ -60,6 +61,17 @@
 			<version>${rest-assured.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.openjdk.jmh</groupId>
+			<artifactId>jmh-core</artifactId>
+			<version>${jmh.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjdk.jmh</groupId>
+			<artifactId>jmh-generator-annprocess</artifactId>
+			<version>${jmh.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -89,6 +101,7 @@
 							<skipTests>false</skipTests>
 							<excludes>
 								<exclude>**/integration/*.java</exclude>
+								<exclude>**/performance/*.java</exclude>
 							</excludes>
 						</configuration>
 					</execution>

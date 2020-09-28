@@ -40,7 +40,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class WidgetApiDeleteIT {
+public class WidgetApiDeleteITest {
   @LocalServerPort private int serverPort;
   @Autowired WidgetRepositoryImpl widgetRepository;
 
