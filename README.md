@@ -120,28 +120,27 @@ There is a defined `ConcurrentAccessLocker` interface with 3 different implement
 
 In order to run application with one or the other syncrhonization mechanism an application property `concurrent.acccesslocker` has to be defined with value: `synchronized`, `readWriteLock` or `stampedLock` where `stampedLock` is used by default when property is not specified.
 
-Below are the results of performance measurements made with `JMH` for one of the specific scenarios:
+Below is an attempt to measure performance with [`JMH`](https://openjdk.java.net/projects/code-tools/jmh/) tool for one of the specific scenarios:
 ```
 # JMH version: 1.25.2
 # VM version: JDK 11.0.8, OpenJDK 64-Bit Server VM, 11.0.8+10
 # VM invoker: /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home/bin/java
-# VM options: -javaagent:/Users/akli/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/ch-0/202.6948.69/IntelliJ IDEA.app/Contents/lib/idea_rt.jar=64353:/Users/akli/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/ch-0/202.6948.69/IntelliJ IDEA.app/Contents/bin -Dfile.encoding=UTF-8
 # Warmup: 2 iterations, 10 s each
 # Measurement: 5 iterations, 10 s each
 # Timeout: 10 min per iteration
 # Threads: 6 threads (1 group; 5x "consume", 1x "produce" in each group), will synchronize iterations
 # Benchmark mode: Throughput, ops/time
 
-Benchmark                                        (consumeProduce)                                              (lockClass)   Mode  Cnt    Score    Error  Units
-ConcurrentAccessLockerBenchmark.measure             100000:100000   com.aklimenko.miro.concurrent.SynchronizedAccessLocker  thrpt    5   13.108 ± 15.150  ops/s
-ConcurrentAccessLockerBenchmark.measure:consume     100000:100000   com.aklimenko.miro.concurrent.SynchronizedAccessLocker  thrpt    5   11.520 ± 14.823  ops/s
-ConcurrentAccessLockerBenchmark.measure:produce     100000:100000   com.aklimenko.miro.concurrent.SynchronizedAccessLocker  thrpt    5    1.588 ±  1.286  ops/s
-ConcurrentAccessLockerBenchmark.measure             100000:100000  com.aklimenko.miro.concurrent.ReadWriteLockAccessLocker  thrpt    5   22.891 ± 10.851  ops/s
-ConcurrentAccessLockerBenchmark.measure:consume     100000:100000  com.aklimenko.miro.concurrent.ReadWriteLockAccessLocker  thrpt    5   14.544 ±  5.778  ops/s
-ConcurrentAccessLockerBenchmark.measure:produce     100000:100000  com.aklimenko.miro.concurrent.ReadWriteLockAccessLocker  thrpt    5    8.346 ±  5.084  ops/s
-ConcurrentAccessLockerBenchmark.measure             100000:100000    com.aklimenko.miro.concurrent.StampedLockAccessLocker  thrpt    5  105.310 ± 27.526  ops/s
-ConcurrentAccessLockerBenchmark.measure:consume     100000:100000    com.aklimenko.miro.concurrent.StampedLockAccessLocker  thrpt    5   80.004 ± 19.542  ops/s
-ConcurrentAccessLockerBenchmark.measure:produce     100000:100000    com.aklimenko.miro.concurrent.StampedLockAccessLocker  thrpt    5   25.306 ±  8.009  ops/s
+Benchmark                                             (consumeProduce)                                              (lockClass)   Mode  Cnt    Score     Error  Units
+ConcurrentAccessLockerBenchmark.measure                    10000:10000   com.aklimenko.miro.concurrent.SynchronizedAccessLocker  thrpt    3    4.603 ±  16.513  ops/s
+ConcurrentAccessLockerBenchmark.measure:createWidget       10000:10000   com.aklimenko.miro.concurrent.SynchronizedAccessLocker  thrpt    3    4.365 ±  13.886  ops/s
+ConcurrentAccessLockerBenchmark.measure:readWidget         10000:10000   com.aklimenko.miro.concurrent.SynchronizedAccessLocker  thrpt    3    0.238 ±   2.939  ops/s
+ConcurrentAccessLockerBenchmark.measure                    10000:10000  com.aklimenko.miro.concurrent.ReadWriteLockAccessLocker  thrpt    3   13.771 ±  31.526  ops/s
+ConcurrentAccessLockerBenchmark.measure:createWidget       10000:10000  com.aklimenko.miro.concurrent.ReadWriteLockAccessLocker  thrpt    3    4.684 ±   6.647  ops/s
+ConcurrentAccessLockerBenchmark.measure:readWidget         10000:10000  com.aklimenko.miro.concurrent.ReadWriteLockAccessLocker  thrpt    3    9.087 ±  25.920  ops/s
+ConcurrentAccessLockerBenchmark.measure                    10000:10000    com.aklimenko.miro.concurrent.StampedLockAccessLocker  thrpt    3  101.496 ± 207.384  ops/s
+ConcurrentAccessLockerBenchmark.measure:createWidget       10000:10000    com.aklimenko.miro.concurrent.StampedLockAccessLocker  thrpt    3    4.350 ±   3.102  ops/s
+ConcurrentAccessLockerBenchmark.measure:readWidget         10000:10000    com.aklimenko.miro.concurrent.StampedLockAccessLocker  thrpt    3   97.146 ± 204.364  ops/s
 ```
 
 See [ConcurrentAccessLockerBenchmark](/src/test/java/com/aklimenko/miro/performance/ConcurrentAccessLockerBenchmark.java) for the reference.

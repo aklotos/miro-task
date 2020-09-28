@@ -1,10 +1,11 @@
 package com.aklimenko.miro.performance;
 
 import com.aklimenko.miro.concurrent.ConcurrentAccessLocker;
+import com.aklimenko.miro.model.widget.WidgetCreateRequest;
+import com.aklimenko.miro.persistence.WidgetRepositoryImpl;
+import java.time.Instant;
 import java.util.List;
-import java.util.NavigableMap;
 import java.util.Random;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Group;
@@ -19,13 +20,16 @@ import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
+/**
+ * JMH Benchmark to measure performance of widget repository with different concurrent access
+ * mechanisms.
+ */
 public class ConcurrentAccessLockerBenchmark {
 
   @State(Scope.Benchmark)
   public static class SharedState {
-
     public ConcurrentAccessLocker lock;
-    public final NavigableMap<Integer, Integer> map = new TreeMap<>();
+    public WidgetRepositoryImpl repository;
     public List<Integer> consumeInts;
     public List<Integer> produceInts;
 
@@ -36,47 +40,42 @@ public class ConcurrentAccessLockerBenchmark {
     })
     public String lockClass;
 
-    @Param({"100000:100000"})
+    @Param({"10000:10000"})
     public String consumeProduce;
 
     @Setup(Level.Iteration)
     public void setUp() throws Exception {
       lock =
           (ConcurrentAccessLocker) Class.forName(lockClass).getDeclaredConstructor().newInstance();
-
+      repository = new WidgetRepositoryImpl(lock);
       var nums = consumeProduce.split(":");
       var consumeListSize = Integer.parseInt(nums[0]);
       var produceListSize = Integer.parseInt(nums[1]);
       consumeInts = new Random().ints().limit(consumeListSize).boxed().collect(Collectors.toList());
       produceInts = new Random().ints().limit(produceListSize).boxed().collect(Collectors.toList());
-      map.clear();
+      repository.cleanUp();
     }
   }
 
   @Benchmark
   @Group("measure")
   @GroupThreads(5)
-  public void consume(final SharedState state, final Blackhole blackhole) {
+  public void readWidget(final SharedState state, final Blackhole blackhole) {
     state.consumeInts.forEach(
         i -> {
-          var value = state.lock.read(() -> state.map.get(i));
-          blackhole.consume(value);
+          var widget = state.repository.readWidget(String.valueOf(i));
+          blackhole.consume(widget);
         });
   }
 
   @Benchmark
   @Group("measure")
-  public void produce(final SharedState state, final Blackhole blackhole) {
+  public void createWidget(final SharedState state, final Blackhole blackhole) {
     state.produceInts.forEach(
         i -> {
-          var value =
-              state.lock.readStateAndWrite(
-                  () -> state.map.get(i),
-                  (val) -> {
-                    state.map.put(i, i);
-                    return i;
-                  });
-          blackhole.consume(value);
+          var widget = new WidgetCreateRequest(i, i, i, (double) i, (double) i);
+          var created = state.repository.createWidget(widget);
+          blackhole.consume(created);
         });
   }
 
