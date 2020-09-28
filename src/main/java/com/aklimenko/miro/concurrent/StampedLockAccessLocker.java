@@ -16,10 +16,12 @@ package com.aklimenko.miro.concurrent;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 /** {@link ConcurrentAccessLocker} implementation based on {@link StampedLockAccessLocker}. */
-@Service("stampedLock")
+@Service
+@ConditionalOnProperty(value = "concurrent.accesslocker", havingValue = "stampedLock", matchIfMissing = true)
 public class StampedLockAccessLocker implements ConcurrentAccessLocker {
   private static final int OPTIMISTIC_READ_RETRIES = 10;
 

@@ -18,8 +18,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Nonnull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /** Represents rate limit rule mutable model for fixed window rate limit algorithm. */
+@Component
 public class RateLimitRule {
 
   /** Rate limit fixed size window in milliseconds */
@@ -28,6 +31,7 @@ public class RateLimitRule {
   /** Limits specified for each rate limited target operation. */
   private final Map<RateLimitTarget, Integer> limits = new HashMap<>();
 
+  @Autowired
   public RateLimitRule(@Nonnull final MiroConfig config) {
     this(
         config.getRateLimit().getWindowSizeMS(),

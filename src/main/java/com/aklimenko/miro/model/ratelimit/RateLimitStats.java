@@ -13,7 +13,6 @@
 */
 package com.aklimenko.miro.model.ratelimit;
 
-import java.time.Instant;
 import javax.annotation.Nonnull;
 
 /**
@@ -41,15 +40,13 @@ public class RateLimitStats {
    * @param nextReset Timestamp of next rate limit window reset.
    * @return {@link RateLimitStats} for unlimited requests.
    */
-  public static RateLimitStats ofUnlimited(@Nonnull Instant nextReset) {
-    return new RateLimitStats("unlimited", "unlimited", String.valueOf(nextReset.toEpochMilli()));
+  public static RateLimitStats ofUnlimited(long nextReset) {
+    return new RateLimitStats("unlimited", "unlimited", String.valueOf(nextReset));
   }
 
-  public static RateLimitStats of(int rateLimit, int availableRequests, Instant nextReset) {
+  public static RateLimitStats of(int rateLimit, long availableRequests, long nextReset) {
     return new RateLimitStats(
-        String.valueOf(rateLimit),
-        String.valueOf(availableRequests),
-        String.valueOf(nextReset.toEpochMilli()));
+        String.valueOf(rateLimit), String.valueOf(availableRequests), String.valueOf(nextReset));
   }
 
   public String getRateLimit() {

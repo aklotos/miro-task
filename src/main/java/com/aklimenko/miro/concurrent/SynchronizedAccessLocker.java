@@ -15,10 +15,12 @@ package com.aklimenko.miro.concurrent;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 /** {@link ConcurrentAccessLocker} implementation based on full synchronization on the locker. */
-@Service("synchronized")
+@Service
+@ConditionalOnProperty(value = "concurrent.accesslocker", havingValue = "synchronized")
 public class SynchronizedAccessLocker implements ConcurrentAccessLocker {
 
   @Override

@@ -17,12 +17,12 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
-/**
- * {@link ConcurrentAccessLocker} implementation based on {@link ReentrantReadWriteLock}.
- */
-@Service("readWriteLock")
+/** {@link ConcurrentAccessLocker} implementation based on {@link ReentrantReadWriteLock}. */
+@Service
+@ConditionalOnProperty(value = "concurrent.accesslocker", havingValue = "readWriteLock")
 public class ReadWriteLockAccessLocker implements ConcurrentAccessLocker {
 
   private final ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -48,7 +48,8 @@ public class ReadWriteLockAccessLocker implements ConcurrentAccessLocker {
   }
 
   @Override
-  public <RESULT, STATE> RESULT readStateAndWrite(Supplier<STATE> stateReader, Function<STATE, RESULT> writeFunc) {
+  public <RESULT, STATE> RESULT readStateAndWrite(
+      Supplier<STATE> stateReader, Function<STATE, RESULT> writeFunc) {
     lock.writeLock().lock();
     try {
       STATE state = stateReader.get();

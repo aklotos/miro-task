@@ -51,7 +51,7 @@ public enum RateLimitTarget {
   }
 
   /**
-   * Tries resolve combination of request method and request URI into rate limit target operation.
+   * Tries to resolve combination of request method and request URI into rate limit target operation.
    *
    * @param requestMethod Request method to match with rate limit target operation.
    * @param requestUri Request URI to match with rate limit target operation.

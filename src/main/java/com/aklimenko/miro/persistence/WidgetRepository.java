@@ -13,12 +13,12 @@
 */
 package com.aklimenko.miro.persistence;
 
-import com.aklimenko.miro.exception.WidgetNotFoundException;
 import com.aklimenko.miro.exception.ZIndexLimitExceededException;
 import com.aklimenko.miro.model.widget.Widget;
 import com.aklimenko.miro.model.widget.WidgetCreateRequest;
 import com.aklimenko.miro.model.widget.WidgetUpdateRequest;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 /** Contract of widget repository with basic CRUD operations on widgets. */
@@ -44,30 +44,27 @@ public interface WidgetRepository {
   List<Widget> listWidgets(int limit, @Nullable String afterId);
 
   /**
-   * Read widget from repository by provided ID.
+   * Read widget from repository by provided ID if found.
    *
    * @param id ID to look for widget.
-   * @return Found {@link Widget}.
-   * @throws WidgetNotFoundException if widget not found by ID.
+   * @return Optionally found {@link Widget}.
    */
-  Widget readWidget(String id);
+  Optional<Widget> readWidget(String id);
 
   /**
-   * Update widget in repository with {@link WidgetUpdateRequest} by provided ID.
+   * Update widget in repository with {@link WidgetUpdateRequest} if found by provided ID.
    *
    * @param id ID to look for widget to update.
    * @param widgetToUpdate Widget update request payload.
-   * @return Updated {@link Widget}.
-   * @throws WidgetNotFoundException if widget not found by ID.
+   * @return Optionally found and updated {@link Widget}.
    * @throws ZIndexLimitExceededException if z-index limit exceeded during widget update.
    */
-  Widget updateWidget(String id, WidgetUpdateRequest widgetToUpdate);
+  Optional<Widget> updateWidget(String id, WidgetUpdateRequest widgetToUpdate);
 
   /**
-   * Delete widget from repository by provided ID.
+   * Delete widget from repository by provided ID if found.
    *
    * @param id ID to look for widget to delete.
-   * @throws WidgetNotFoundException if widget not found by ID.
    */
-  void deleteWidget(String id);
+  boolean deleteWidget(String id);
 }

@@ -109,6 +109,16 @@ Response:
 Widget
 ```
 
+## Concurrent Access
+Application implements a separate mechanism to ensure all shared resources in widgets repository is safe to access and modify concurrently. 
+
+There is a defined `ConcurrentAccessLocker` interface with 3 different implementations based on 3 different synchronization mechanisms:
+* `synchronized` keyword
+* `ReadWriteReentrantLock`
+* `StampedLock`
+
+In order to run application with one or the other syncrhonization mechanism an application property `concurrent.acccesslocker` has to be defined with value: `synchronized`, `readWriteLock` or `stampedLock` where `stampedLock` is used by default when property is not specified. 
+
 ## Rate Limit Service
 
 Application implements rate limiting functionality with fixed window algorithm. Fixed window algorithms use a fixed rate to track the rate of requests using a simple incremental counter. The window is defined for a set number of seconds, like 3600 for one hour, for example. If the counter exceeds the limit for the set duration, the additional requests will be discarded.

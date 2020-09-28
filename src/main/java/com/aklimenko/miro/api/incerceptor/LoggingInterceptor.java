@@ -28,11 +28,13 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
   public boolean preHandle(
       final HttpServletRequest request, final HttpServletResponse response, final Object handler)
       throws Exception {
-    String url = request.getRequestURI();
-    if (request.getQueryString() != null) {
-      url += "?" + request.getQueryString();
+    if (log.isTraceEnabled()) {
+      String url = request.getRequestURI();
+      if (request.getQueryString() != null) {
+        url += "?" + request.getQueryString();
+      }
+      log.trace("{} {}", request.getMethod(), url);
     }
-    log.trace("{} {}", request.getMethod(), url);
 
     return super.preHandle(request, response, handler);
   }

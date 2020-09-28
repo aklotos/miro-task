@@ -14,7 +14,6 @@
 package com.aklimenko.miro.persistence;
 
 import com.aklimenko.miro.concurrent.ConcurrentAccessLocker;
-import com.aklimenko.miro.exception.WidgetNotFoundException;
 import com.aklimenko.miro.model.widget.Widget;
 import com.aklimenko.miro.model.widget.WidgetCreateRequest;
 import com.aklimenko.miro.model.widget.WidgetUpdateRequest;
@@ -29,6 +28,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
@@ -54,7 +54,7 @@ public class WidgetRepositoryImpl implements WidgetRepository {
     }
   }
 
-  public WidgetRepositoryImpl(@Qualifier("stampedLock") final ConcurrentAccessLocker accessLocker) {
+  public WidgetRepositoryImpl(final ConcurrentAccessLocker accessLocker) {
     this.accessLocker = accessLocker;
   }
 
@@ -138,34 +138,31 @@ public class WidgetRepositoryImpl implements WidgetRepository {
   }
 
   @Override
-  public Widget readWidget(String id) {
+  public Optional<Widget> readWidget(String id) {
     return accessLocker.read(
         () -> {
           final Widget foundWidget = widgetsById.get(id);
-          if (foundWidget == null) {
-            throw new WidgetNotFoundException(id);
-          }
-
-          return foundWidget;
+          return Optional.ofNullable(foundWidget);
         });
   }
 
   @Override
-  public Widget updateWidget(String id, WidgetUpdateRequest widgetUpdate) {
+  public Optional<Widget> updateWidget(String id, WidgetUpdateRequest widgetUpdate) {
     // z-Index is not updated
     if (widgetUpdate.getZ() == null) {
       return accessLocker.readStateAndWrite(
           // reading state to ensure widget with provided id exists
           () -> {
             final Widget widgetToUpdate = widgetsById.get(id);
-            if (widgetToUpdate == null) {
-              throw new WidgetNotFoundException(id);
-            }
-            return widgetToUpdate.updateBy(widgetUpdate);
+            return Optional.ofNullable(widgetToUpdate)
+                .map(toUpdate -> toUpdate.updateBy(widgetUpdate));
           },
-          (updatedWidget) -> {
-            widgetsById.put(id, updatedWidget);
-            widgetsByZIndex.put(updatedWidget.getZ(), updatedWidget);
+          (Optional<Widget> updatedWidget) -> {
+            updatedWidget.ifPresent(
+                widget -> {
+                  widgetsById.put(id, widget);
+                  widgetsByZIndex.put(widget.getZ(), widget);
+                });
             return updatedWidget;
           });
     }
@@ -174,47 +171,52 @@ public class WidgetRepositoryImpl implements WidgetRepository {
     return accessLocker.readStateAndWrite(
         () -> {
           final Widget widgetToUpdate = widgetsById.get(id);
-          if (widgetToUpdate == null) {
-            throw new WidgetNotFoundException(id);
-          }
-          int previousZ = widgetToUpdate.getZ();
-          Widget updatedWidget = widgetToUpdate.updateBy(widgetUpdate);
+          return Optional.ofNullable(widgetToUpdate)
+              .map(
+                  toUpdate -> {
+                    int previousZ = widgetToUpdate.getZ();
+                    final Widget updatedWidget = widgetToUpdate.updateBy(widgetUpdate);
 
-          final int z = widgetUpdate.getZ();
-          final Integer zToShift = (widgetsByZIndex.containsKey(z)) ? z : null;
-          return new WidgetUpdateState(updatedWidget, zToShift, previousZ);
+                    final int z = widgetUpdate.getZ();
+                    final Integer zToShift = (widgetsByZIndex.containsKey(z)) ? z : null;
+                    return new WidgetUpdateState(updatedWidget, zToShift, previousZ);
+                  });
         },
-        (widgetUpdateState) -> {
-          final Integer shiftFromZ = widgetUpdateState.shiftFromZ;
-          if (shiftFromZ != null) {
-            shiftUpwardsFrom(shiftFromZ);
-          }
-          widgetsByZIndex.remove(widgetUpdateState.previousZ);
+        (Optional<WidgetUpdateState> widgetUpdateState) -> {
+          widgetUpdateState.ifPresent(
+              state -> {
+                final Integer shiftFromZ = state.shiftFromZ;
+                if (shiftFromZ != null) {
+                  shiftUpwardsFrom(shiftFromZ);
+                }
+                widgetsByZIndex.remove(state.previousZ);
 
-          final Widget updatedWidget = widgetUpdateState.updatedWidget;
-          widgetsById.put(id, updatedWidget);
-          widgetsByZIndex.put(updatedWidget.getZ(), updatedWidget);
-          return updatedWidget;
+                final Widget updatedWidget = state.updatedWidget;
+                widgetsById.put(id, updatedWidget);
+                widgetsByZIndex.put(updatedWidget.getZ(), updatedWidget);
+              });
+
+          return widgetUpdateState.map(state -> state.updatedWidget);
         });
   }
 
   @Override
-  public void deleteWidget(String id) {
-    accessLocker.readStateAndWrite(
+  public boolean deleteWidget(String id) {
+    return accessLocker.readStateAndWrite(
         // reading state to ensure widget with provided id exists
         () -> {
           final Widget widgetToRemove = widgetsById.get(id);
-          if (widgetToRemove == null) {
-            throw new WidgetNotFoundException(id);
-          }
-          return widgetToRemove;
+          return Optional.ofNullable(widgetToRemove);
         },
         // performing widget deletion
-        (widgetToRemove) -> {
-          widgetsById.remove(id);
-          widgetsByZIndex.remove(widgetToRemove.getZ());
+        (Optional<Widget> widgetToRemove) -> {
+          widgetToRemove.ifPresent(
+              widget -> {
+                widgetsById.remove(id);
+                widgetsByZIndex.remove(widget.getZ());
+              });
 
-          return Optional.empty();
+          return widgetToRemove.isPresent();
         });
   }
 

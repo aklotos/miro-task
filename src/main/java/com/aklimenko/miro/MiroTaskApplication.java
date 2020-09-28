@@ -13,7 +13,6 @@
 */
 package com.aklimenko.miro;
 
-import com.aklimenko.miro.model.ratelimit.RateLimitRule;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -33,15 +32,5 @@ public class MiroTaskApplication {
         builder
             .featuresToDisable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
             .featuresToEnable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-  }
-
-  @Bean
-  public MiroConfig config() {
-    return new MiroConfig();
-  }
-
-  @Bean
-  public RateLimitRule rateLimitRule(final MiroConfig config) {
-    return new RateLimitRule(config);
   }
 }

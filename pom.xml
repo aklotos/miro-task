@@ -87,9 +87,9 @@
 						</goals>
 						<configuration>
 							<skipTests>false</skipTests>
-							<includes>
-								<include>**/*Test.java</include>
-							</includes>
+							<excludes>
+								<exclude>**/integration/*.java</exclude>
+							</excludes>
 						</configuration>
 					</execution>
 					<execution>
@@ -101,8 +101,7 @@
 						<configuration>
 							<skipTests>false</skipTests>
 							<includes>
-								<include>**/*IT.java</include>
-								<include>**/*Tests.java</include>
+								<include>**/integration/*.java</include>
 							</includes>
 						</configuration>
 					</execution>

@@ -36,6 +36,7 @@ public interface RateLimitService {
    *
    * @param target Target operation to collection stats for.
    * @return {@link RateLimitStats} for specified target operation.
+   * @throws RateLimitExceededException if rate limit exceeded for specified target operation
    */
   RateLimitStats getStats(final RateLimitTarget target);
 }

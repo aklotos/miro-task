@@ -14,12 +14,15 @@
 package com.aklimenko.miro;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 @ConfigurationProperties(prefix = "miro")
 public class MiroConfig {
 
-  public static class RateLimit {
+  private final RateLimit rateLimit = new RateLimit();
 
+  public static class RateLimit {
     private int windowSizeMS = 60000; // 1 minute
     private int limitGlobal = -1;
     private int limitListWidgets = -1;
@@ -84,8 +87,6 @@ public class MiroConfig {
       this.limitDeleteWidget = limitDeleteWidget;
     }
   }
-
-  private final RateLimit rateLimit = new RateLimit();
 
   public RateLimit getRateLimit() {
     return rateLimit;

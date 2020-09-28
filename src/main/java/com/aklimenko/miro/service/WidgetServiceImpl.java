@@ -13,6 +13,7 @@
 */
 package com.aklimenko.miro.service;
 
+import com.aklimenko.miro.exception.WidgetNotFoundException;
 import com.aklimenko.miro.model.pagination.Page;
 import com.aklimenko.miro.model.pagination.Pagination;
 import com.aklimenko.miro.model.widget.Widget;
@@ -20,6 +21,7 @@ import com.aklimenko.miro.model.widget.WidgetCreateRequest;
 import com.aklimenko.miro.model.widget.WidgetUpdateRequest;
 import com.aklimenko.miro.persistence.WidgetRepository;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 /** Implementation of {@link WidgetService} contract. */
@@ -47,16 +49,21 @@ public class WidgetServiceImpl implements WidgetService {
 
   @Override
   public Widget readWidget(String id) {
-    return widgetRepository.readWidget(id);
+    final Optional<Widget> found = widgetRepository.readWidget(id);
+    return found.orElseThrow(() -> new WidgetNotFoundException(id));
   }
 
   @Override
   public Widget updateWidget(String id, WidgetUpdateRequest widgetToUpdate) {
-    return widgetRepository.updateWidget(id, widgetToUpdate);
+    final Optional<Widget> updated = widgetRepository.updateWidget(id, widgetToUpdate);
+    return updated.orElseThrow(() -> new WidgetNotFoundException(id));
   }
 
   @Override
   public void deleteWidget(String id) {
-    widgetRepository.deleteWidget(id);
+    boolean deleted = widgetRepository.deleteWidget(id);
+    if (!deleted) {
+      throw new WidgetNotFoundException(id);
+    }
   }
 }
